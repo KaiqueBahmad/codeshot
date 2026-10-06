@@ -7,9 +7,7 @@ import (
 	"strings"
 
 	"codeshot/internal/editor"
-	"codeshot/internal/home"
 	"codeshot/internal/lang"
-	"codeshot/internal/store"
 	"codeshot/internal/workspace"
 )
 
@@ -43,40 +41,11 @@ func solveCmd(args []string) int {
 	if err != nil {
 		return report(err)
 	}
-	dir, err := NewAttempt(s, p, l, l.Template)
+	dir, err := workspace.New(s, p, l, l.Template)
 	if err != nil {
 		return report(err)
 	}
 	return report(openIn(*editorID, dir, l.File))
-}
-
-// NewAttempt records a new attempt at p in l, and makes its folder with code
-// as the solution. It gives back the folder.
-func NewAttempt(s *store.Store, p store.ProblemInfo, l lang.Lang, code string) (string, error) {
-	root, err := home.Path("attempts")
-	if err != nil {
-		return "", err
-	}
-	samples, err := s.Tests(p.ID, true)
-	if err != nil {
-		return "", err
-	}
-	id, err := s.AddAttempt(p.ID, l.ID, "")
-	if err != nil {
-		return "", err
-	}
-	dir, err := workspace.Make(root, p.Slug, id)
-	if err != nil {
-		return "", err
-	}
-	if err := s.SetAttemptDir(id, dir); err != nil {
-		return "", err
-	}
-	spec := workspace.Spec{
-		AttemptID: id, Problem: p.Slug, Title: p.Title, Lang: l.ID, File: l.File,
-		TimeLimitMS: p.TimeLimitMS, MemoryMB: p.MemoryMB,
-	}
-	return dir, workspace.Fill(dir, spec, code, p.Statement, samples)
 }
 
 // openIn opens file in dir with the editor whose id is editorID, waiting for

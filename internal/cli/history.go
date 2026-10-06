@@ -11,6 +11,7 @@ import (
 	"codeshot/internal/judge"
 	"codeshot/internal/lang"
 	"codeshot/internal/store"
+	"codeshot/internal/workspace"
 )
 
 func init() {
@@ -110,7 +111,7 @@ func restoreCmd(args []string) int {
 	if err != nil {
 		return report(err)
 	}
-	dir, err := NewAttempt(s, p, l, sub.Code)
+	dir, err := workspace.New(s, p, l, sub.Code)
 	if err != nil {
 		return report(err)
 	}
