@@ -7,6 +7,12 @@ import (
 	"path/filepath"
 )
 
+// dirName is the directory in the user's home codeshot keeps everything in.
+// A development build sets it apart from the installed codeshot's, with
+// -ldflags "-X codeshot/internal/home.dirName=.codeshot-dev", so that trying
+// it out never touches the real history.
+var dirName = ".codeshot"
+
 // Dir is codeshot's own directory. It is not created here.
 func Dir() (string, error) {
 	if dir := os.Getenv("CODESHOT_HOME"); dir != "" {
@@ -16,7 +22,7 @@ func Dir() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(user, ".codeshot"), nil
+	return filepath.Join(user, dirName), nil
 }
 
 // Path is name inside codeshot's directory.
