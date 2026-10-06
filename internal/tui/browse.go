@@ -205,8 +205,11 @@ func (b *browse) key(a *app, k string) tea.Cmd {
 	return nil
 }
 
-// open is filled in by the problem screen.
-func (b *browse) open(a *app, p store.ProblemInfo) tea.Cmd { return nil }
+// open shows a problem.
+func (b *browse) open(a *app, p store.ProblemInfo) tea.Cmd {
+	a.push(newProblem(a, p))
+	return nil
+}
 
 // syncCmd imports the default bank in the background.
 func syncCmd(a *app) tea.Cmd {
