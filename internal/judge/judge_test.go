@@ -3,6 +3,7 @@ package judge
 import (
 	"context"
 	"os/exec"
+	"strings"
 	"testing"
 
 	"codeshot/internal/lang"
@@ -58,6 +59,9 @@ func TestJudge(t *testing.T) {
 			}
 			if out.Verdict != want {
 				t.Fatalf("verdict %s, want %s: %+v", out.Verdict, want, out)
+			}
+			if strings.Contains(out.CompileOutput, "longer than") {
+				t.Fatalf("a build that failed at once is said to have run out of time:\n%s", out.CompileOutput)
 			}
 		})
 	}

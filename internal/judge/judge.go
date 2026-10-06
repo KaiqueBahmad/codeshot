@@ -141,7 +141,7 @@ func Judge(ctx context.Context, l lang.Lang, code string, tests []problem.Test, 
 			if !errors.As(err, &exit) {
 				return Outcome{}, fmt.Errorf("building: %w", err)
 			}
-			if bctx.Err() != nil {
+			if errors.Is(bctx.Err(), context.DeadlineExceeded) {
 				out = append(out, "\nbuilding took longer than "+buildTimeout.String()...)
 			}
 			return Outcome{Verdict: CompilationError, CompileOutput: string(out)}, nil
