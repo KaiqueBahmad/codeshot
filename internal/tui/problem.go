@@ -68,6 +68,10 @@ func (s *problemScreen) update(a *app, msg tea.Msg) tea.Cmd {
 	case refreshMsg:
 		s.load(a)
 		return nil
+	case noticeMsg:
+		s.message = string(msg)
+		s.load(a)
+		return nil
 	case tea.KeyPressMsg:
 		s.message = ""
 		switch msg.String() {
@@ -108,10 +112,9 @@ func (s *problemScreen) historyKey(a *app, k string) tea.Cmd {
 	return nil
 }
 
-// solve and reopen are filled in by the solving screens.
-func (s *problemScreen) solve(a *app) tea.Cmd { return nil }
+func (s *problemScreen) solve(a *app) tea.Cmd { return pickLanguage(a, s.p) }
 
-func (s *problemScreen) reopen(a *app, at store.Attempt) tea.Cmd { return nil }
+func (s *problemScreen) reopen(a *app, at store.Attempt) tea.Cmd { return reopenAttempt(a, at) }
 
 func (s *problemScreen) view(a *app) string {
 	if s.err != nil {
@@ -119,6 +122,9 @@ func (s *problemScreen) view(a *app) string {
 	}
 	header := s.header()
 	footer := help("tab", "statement / history", "↑↓", "scroll", "s", "solve", "enter", "open", "esc", "back")
+	if s.focus == 1 && len(s.rows) > 0 && s.rows[s.cursor].attempt != nil {
+		footer = help("tab", "statement / history", "↑↓", "move", "s", "solve", "enter", "open the folder again", "esc", "back")
+	}
 	if s.message != "" {
 		footer = s.message
 	}

@@ -18,6 +18,7 @@ type submissionScreen struct {
 	sub      store.Submission
 	body     viewport.Model
 	rendered int
+	message  string
 	err      error
 }
 
@@ -28,7 +29,12 @@ func newSubmission(a *app, id int64) *submissionScreen {
 }
 
 func (s *submissionScreen) update(a *app, msg tea.Msg) tea.Cmd {
+	if n, ok := msg.(noticeMsg); ok {
+		s.message = string(n)
+		return nil
+	}
 	if k, ok := msg.(tea.KeyPressMsg); ok {
+		s.message = ""
 		switch k.String() {
 		case "esc", "q":
 			return a.pop()
@@ -41,8 +47,7 @@ func (s *submissionScreen) update(a *app, msg tea.Msg) tea.Cmd {
 	return cmd
 }
 
-// restore is filled in by the solving screens.
-func (s *submissionScreen) restore(a *app) tea.Cmd { return nil }
+func (s *submissionScreen) restore(a *app) tea.Cmd { return restoreInto(a, s.sub) }
 
 func (s *submissionScreen) view(a *app) string {
 	if s.err != nil {
@@ -52,6 +57,9 @@ func (s *submissionScreen) view(a *app) string {
 	header := titleStyle.Render(fmt.Sprintf("Submission #%d", sub.ID)) +
 		faint.Render(fmt.Sprintf("  %s  ·  %s  ·  %s", sub.Slug, sub.Lang, sub.CreatedAt.Format("2006-01-02 15:04")))
 	footer := help("↑↓", "scroll", "r", "restore into a new attempt", "esc", "back")
+	if s.message != "" {
+		footer = s.message
+	}
 	height := a.height - 2
 	if s.rendered != a.width {
 		s.body.SetContent(s.content(a, a.width-4))

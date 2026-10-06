@@ -42,6 +42,7 @@ func newBrowse(a *app) *browse {
 	b := &browse{search: textinput.New(), focus: 1}
 	b.search.Prompt = "/"
 	b.search.Placeholder = "search"
+	b.search.SetWidth(40)
 	b.load(a)
 	return b
 }
