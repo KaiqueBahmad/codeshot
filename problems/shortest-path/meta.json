@@ -1,0 +1,8 @@
+{
+  "title": "Shortest Path",
+  "difficulty": "hard",
+  "tags": ["graphs", "dijkstra"],
+  "time_limit_ms": 3000,
+  "memory_mb": 256,
+  "samples": ["01", "02"]
+}

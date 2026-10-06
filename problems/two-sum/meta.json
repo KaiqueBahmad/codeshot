@@ -1,0 +1,8 @@
+{
+  "title": "Two Sum",
+  "difficulty": "easy",
+  "tags": ["arrays", "hash-table"],
+  "time_limit_ms": 2000,
+  "memory_mb": 256,
+  "samples": ["01", "02"]
+}

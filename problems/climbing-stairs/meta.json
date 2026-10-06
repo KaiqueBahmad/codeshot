@@ -1,0 +1,8 @@
+{
+  "title": "Climbing Stairs",
+  "difficulty": "easy",
+  "tags": ["dp"],
+  "time_limit_ms": 1000,
+  "memory_mb": 256,
+  "samples": ["01", "02"]
+}

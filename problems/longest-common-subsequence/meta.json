@@ -1,0 +1,8 @@
+{
+  "title": "Longest Common Subsequence",
+  "difficulty": "medium",
+  "tags": ["dp", "strings"],
+  "time_limit_ms": 2000,
+  "memory_mb": 256,
+  "samples": ["01", "02"]
+}
