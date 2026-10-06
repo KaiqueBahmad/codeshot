@@ -36,6 +36,10 @@ Commands:
   submit [folder]
                  judge an attempt against every test of its problem, hidden
                  ones too, and record the submission
+  history [problem | submission id]
+                 list the submissions, or print one in full with its code
+  restore <submission id> [--editor <editor>]
+                 start a new attempt from the code of an old submission
 
 Options:
   -h, --help     print this help and exit
