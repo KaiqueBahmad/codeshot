@@ -23,6 +23,22 @@ app/install-completion:
   dir: .
   run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot && mkdir -p ~/.local/share/bash-completion/completions && ./bin/codeshot-dev completion bash | sed -e 's/^_codeshot()/_codeshot_dev()/' -e 's/^complete -F _codeshot codeshot$/complete -F _codeshot_dev codeshot-dev/' > ~/.local/share/bash-completion/completions/codeshot-dev
 
+app/link:
+  description: Build into bin/ and link it as ~/.local/bin/codeshot-dev, so every later build is on the PATH
+  dir: .
+  run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot && mkdir -p ~/.local/bin && ln -sfn "$(pwd)/bin/codeshot-dev" ~/.local/bin/codeshot-dev && echo "linked ~/.local/bin/codeshot-dev -> $(pwd)/bin/codeshot-dev"
+
+app/unlink:
+  description: Remove the ~/.local/bin/codeshot-dev link, when it points into this checkout
+  dir: .
+  run: |
+    link=~/.local/bin/codeshot-dev
+    if [ "$(readlink "$link")" = "$(pwd)/bin/codeshot-dev" ]; then
+      rm "$link" && echo "removed $link"
+    else
+      echo "$link is not a link to this checkout, so it is left alone"
+    fi
+
 app/reset:
   description: Delete ~/.codeshot-dev, the dev build's database and attempts, to start over
   run: rm -rf ~/.codeshot-dev

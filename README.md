@@ -106,7 +106,9 @@ trying it out never touches the history of an installed codeshot.
 `runbook run app/sync` imports the problems of the checkout into it,
 `runbook run app/start` opens its TUI, and `runbook run app/install-completion`
 makes `codeshot-dev <Tab>` complete in bash, apart from `codeshot`'s own
-completion.
+completion. `runbook run app/link` links `bin/codeshot-dev` into `~/.local/bin`,
+so every later build runs as `codeshot-dev` from anywhere, and
+`runbook run app/unlink` takes the link away.
 
 ## Adding problems
 
