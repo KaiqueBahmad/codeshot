@@ -4,5 +4,11 @@
   "tags": ["stack", "strings"],
   "time_limit_ms": 2000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "is_valid",
+    "input": ["s: line"],
+    "params": ["s"],
+    "returns": "bool"
+  }
 }

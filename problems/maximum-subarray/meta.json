@@ -4,5 +4,11 @@
   "tags": ["arrays", "dp"],
   "time_limit_ms": 2000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "max_sub_array",
+    "input": ["n: int", "nums: long[n]"],
+    "params": ["nums"],
+    "returns": "long"
+  }
 }

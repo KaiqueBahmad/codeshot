@@ -4,5 +4,12 @@
   "tags": ["binary-search", "arrays"],
   "time_limit_ms": 2000,
   "memory_mb": 256,
-  "samples": ["01"]
+  "samples": ["01"],
+  "function": {
+    "name": "search",
+    "input": ["n: int", "q: int", "nums: int[n]", "queries: int[q]"],
+    "params": ["nums", "queries"],
+    "returns": "int[]",
+    "output": "lines"
+  }
 }

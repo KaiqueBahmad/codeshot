@@ -4,5 +4,11 @@
   "tags": ["graphs", "bfs", "dfs"],
   "time_limit_ms": 2000,
   "memory_mb": 256,
-  "samples": ["01"]
+  "samples": ["01"],
+  "function": {
+    "name": "num_islands",
+    "input": ["r: int", "c: int", "grid: word[r]"],
+    "params": ["grid"],
+    "returns": "int"
+  }
 }

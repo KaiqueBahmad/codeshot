@@ -4,5 +4,11 @@
   "tags": ["dp", "strings"],
   "time_limit_ms": 2000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "longest_common_subsequence",
+    "input": ["a: word", "b: word"],
+    "params": ["a", "b"],
+    "returns": "int"
+  }
 }

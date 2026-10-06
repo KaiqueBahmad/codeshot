@@ -4,5 +4,11 @@
   "tags": ["graphs", "dijkstra"],
   "time_limit_ms": 3000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "shortest_path",
+    "input": ["n: int", "m: int", "s: int", "t: int", "roads: int[m][3]"],
+    "params": ["n", "roads", "s", "t"],
+    "returns": "long"
+  }
 }

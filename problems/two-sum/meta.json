@@ -4,5 +4,11 @@
   "tags": ["arrays", "hash-table"],
   "time_limit_ms": 1000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "two_sum",
+    "input": ["n: int", "target: int", "nums: int[n]"],
+    "params": ["nums", "target"],
+    "returns": "int[]"
+  }
 }

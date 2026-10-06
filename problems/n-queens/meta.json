@@ -4,5 +4,11 @@
   "tags": ["backtracking"],
   "time_limit_ms": 5000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "total_n_queens",
+    "input": ["n: int"],
+    "params": ["n"],
+    "returns": "int"
+  }
 }

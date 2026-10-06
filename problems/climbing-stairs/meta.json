@@ -4,5 +4,11 @@
   "tags": ["dp"],
   "time_limit_ms": 1000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "climb_stairs",
+    "input": ["n: int"],
+    "params": ["n"],
+    "returns": "int"
+  }
 }

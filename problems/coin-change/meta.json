@@ -4,5 +4,11 @@
   "tags": ["dp"],
   "time_limit_ms": 2000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "coin_change",
+    "input": ["n: int", "amount: int", "coins: int[n]"],
+    "params": ["coins", "amount"],
+    "returns": "int"
+  }
 }

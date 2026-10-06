@@ -4,5 +4,12 @@
   "tags": ["arrays", "sorting"],
   "time_limit_ms": 2000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "merge",
+    "input": ["n: int", "intervals: int[n][2]"],
+    "params": ["intervals"],
+    "returns": "int[][2]",
+    "output": "count"
+  }
 }
