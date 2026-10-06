@@ -8,7 +8,7 @@ be used twice.
 
 The first line has `n` and `target`. The second line has the `n` integers.
 
-- `2 ≤ n ≤ 10^5`
+- `2 ≤ n ≤ 2·10^5`
 - `-10^9 ≤ a[i], target ≤ 10^9`
 
 ## Output
