@@ -28,6 +28,19 @@ app/link:
   dir: .
   run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot && mkdir -p ~/.local/bin && ln -sfn "$(pwd)/bin/codeshot-dev" ~/.local/bin/codeshot-dev && echo "linked ~/.local/bin/codeshot-dev -> $(pwd)/bin/codeshot-dev"
 
+app/dev-install:
+  description: Build into bin/, install its bash completion and link it into ~/.local/bin, all of it at once
+  dir: .
+  run: |
+    set -e
+    go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot
+    mkdir -p ~/.local/share/bash-completion/completions ~/.local/bin
+    ./bin/codeshot-dev completion bash | sed -e 's/^_codeshot()/_codeshot_dev()/' -e 's/^complete -F _codeshot codeshot$/complete -F _codeshot_dev codeshot-dev/' > ~/.local/share/bash-completion/completions/codeshot-dev
+    echo "installed the bash completion in ~/.local/share/bash-completion/completions/codeshot-dev"
+    ln -sfn "$(pwd)/bin/codeshot-dev" ~/.local/bin/codeshot-dev
+    echo "linked ~/.local/bin/codeshot-dev -> $(pwd)/bin/codeshot-dev"
+    echo "open a new shell for codeshot-dev <Tab> to complete"
+
 app/unlink:
   description: Remove the ~/.local/bin/codeshot-dev link, when it points into this checkout
   dir: .

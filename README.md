@@ -108,7 +108,8 @@ trying it out never touches the history of an installed codeshot.
 makes `codeshot-dev <Tab>` complete in bash, apart from `codeshot`'s own
 completion. `runbook run app/link` links `bin/codeshot-dev` into `~/.local/bin`,
 so every later build runs as `codeshot-dev` from anywhere, and
-`runbook run app/unlink` takes the link away.
+`runbook run app/unlink` takes the link away. `runbook run app/dev-install`
+does the build, the completion and the link at once.
 
 ## Adding problems
 
