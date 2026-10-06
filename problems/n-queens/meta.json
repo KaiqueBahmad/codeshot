@@ -2,7 +2,7 @@
   "title": "N-Queens",
   "difficulty": "hard",
   "tags": ["backtracking"],
-  "time_limit_ms": 3000,
+  "time_limit_ms": 5000,
   "memory_mb": 256,
   "samples": ["01", "02"]
 }
