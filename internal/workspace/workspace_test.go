@@ -8,21 +8,22 @@ import (
 	"codeshot/internal/problem"
 )
 
-func TestReserve_Numbers(t *testing.T) {
+func TestMake(t *testing.T) {
 	root := t.TempDir()
-	for want := 1; want <= 3; want++ {
-		dir, err := Reserve(root, "two-sum")
-		if err != nil {
-			t.Fatal(err)
-		}
-		if filepath.Base(dir) != string(rune('0'+want)) {
-			t.Fatalf("folder %s, want %d", dir, want)
-		}
+	dir, err := Make(root, "two-sum", 12)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if dir != filepath.Join(root, "two-sum", "12") {
+		t.Fatalf("folder %s", dir)
+	}
+	if info, err := os.Stat(dir); err != nil || !info.IsDir() {
+		t.Fatalf("no folder made: %v", err)
 	}
 }
 
 func TestFillAndFind(t *testing.T) {
-	dir, err := Reserve(t.TempDir(), "echo")
+	dir, err := Make(t.TempDir(), "echo", 7)
 	if err != nil {
 		t.Fatal(err)
 	}

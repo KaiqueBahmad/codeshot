@@ -61,13 +61,15 @@ func NewAttempt(s *store.Store, p store.ProblemInfo, l lang.Lang, code string) (
 	if err != nil {
 		return "", err
 	}
-	dir, err := workspace.Reserve(root, p.Slug)
+	id, err := s.AddAttempt(p.ID, l.ID, "")
 	if err != nil {
 		return "", err
 	}
-	id, err := s.AddAttempt(p.ID, l.ID, dir)
+	dir, err := workspace.Make(root, p.Slug, id)
 	if err != nil {
-		os.Remove(dir)
+		return "", err
+	}
+	if err := s.SetAttemptDir(id, dir); err != nil {
 		return "", err
 	}
 	spec := workspace.Spec{

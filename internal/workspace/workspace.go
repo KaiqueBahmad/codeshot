@@ -1,6 +1,6 @@
 // Package workspace makes the folder an attempt is worked on in:
 //
-//	~/.codeshot/attempts/<slug>/<n>/
+//	~/.codeshot/attempts/<slug>/<attempt id>/
 //	  main.c        the solution, from the language's template
 //	  problem.md    the statement, to read next to it
 //	  spec.json     which problem and language, and the limits
@@ -14,7 +14,6 @@ package workspace
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"os"
 	"os/exec"
@@ -39,23 +38,13 @@ type Spec struct {
 	MemoryMB    int    `json:"memory_mb"`
 }
 
-// Reserve makes the next free numbered folder for an attempt at slug, under
-// root, and gives back its path.
-func Reserve(root, slug string) (string, error) {
-	parent := filepath.Join(root, slug)
-	if err := os.MkdirAll(parent, 0o755); err != nil {
-		return "", err
-	}
-	for n := 1; ; n++ {
-		dir := filepath.Join(parent, strconv.Itoa(n))
-		err := os.Mkdir(dir, 0o755)
-		if err == nil {
-			return dir, nil
-		}
-		if !errors.Is(err, os.ErrExist) {
-			return "", err
-		}
-	}
+// Make makes the folder for the attempt with id at slug, under root, and
+// gives back its path. Folders are named for the attempt's id, which is never
+// given out twice, so a folder that was deleted never comes back holding
+// something else.
+func Make(root, slug string, id int64) (string, error) {
+	dir := filepath.Join(root, slug, strconv.FormatInt(id, 10))
+	return dir, os.MkdirAll(dir, 0o755)
 }
 
 // Fill writes an attempt's files into dir: code as the solution, the
