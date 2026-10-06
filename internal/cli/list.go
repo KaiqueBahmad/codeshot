@@ -22,6 +22,7 @@ func listCmd(args []string) int {
 	tag := flags.String("tag", "", "only problems with this tag")
 	difficulty := flags.String("difficulty", "", "only problems of this difficulty: easy, medium or hard")
 	status := flags.String("status", "", "only problems with this status: solved, tried or untouched")
+	names := flags.Bool("names", false, "print only each problem's slug and title, a tab apart, as completion reads them")
 	if err := flags.Parse(args); err != nil {
 		return 2
 	}
@@ -35,7 +36,7 @@ func listCmd(args []string) int {
 	if err != nil {
 		return report(err)
 	}
-	if len(all) == 0 {
+	if len(all) == 0 && !*names {
 		fmt.Fprintln(os.Stderr, "no problems yet: run 'codeshot sync' to fetch them")
 		return 1
 	}
@@ -46,6 +47,12 @@ func listCmd(args []string) int {
 			(*status == "" || p.Status == *status) {
 			shown = append(shown, p)
 		}
+	}
+	if *names {
+		for _, p := range shown {
+			fmt.Printf("%s\t%s\n", p.Slug, p.Title)
+		}
+		return 0
 	}
 	printProblems(os.Stdout, shown, isTerminal(os.Stdout))
 	return 0

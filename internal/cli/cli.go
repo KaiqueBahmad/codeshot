@@ -26,7 +26,7 @@ Commands:
   sync [--from <git url | dir>]
                  import the problems of a bank, by default the codeshot
                  repository
-  list [--tag t] [--difficulty d] [--status s]
+  list [--tag t] [--difficulty d] [--status s] [--names]
                  print the problems: ✓ solved, ~ tried, · untouched
   solve <problem> --lang <language> [--editor <editor>]
                  start a new attempt in a folder of its own, and open it in
@@ -43,6 +43,8 @@ Commands:
   clean [problem] [--keep-last n] [--force]
                  delete attempt folders; what was submitted stays in the
                  history, and folders with work that was not are kept
+  completion bash|zsh|fish
+                 print a completion script for the shell
 
 Options:
   -h, --help     print this help and exit

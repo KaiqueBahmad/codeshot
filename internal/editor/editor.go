@@ -40,6 +40,15 @@ func fileOnly(dir, file string) []string { return []string{filepath.Join(dir, fi
 
 func folderAndFile(dir, file string) []string { return []string{dir, filepath.Join(dir, file)} }
 
+// IDs lists the id of every editor looked for, installed or not.
+func IDs() []string {
+	ids := make([]string, len(known))
+	for i, e := range known {
+		ids[i] = e.ID
+	}
+	return ids
+}
+
 // Installed lists the editors found on the PATH. $VISUAL or $EDITOR, when
 // set to something that is not already among them, comes first.
 func Installed() []Editor {
