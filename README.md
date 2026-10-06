@@ -95,6 +95,19 @@ the end, do not count when output is compared.
 
 The first submission in a language pulls its image, which takes a while once.
 
+## Developing
+
+The commands for working on codeshot are in `runbook.yml`, for
+[runbook](https://github.com/kaiquebahmad/runbook): `runbook list` shows them,
+and `runbook run go/check` runs everything that must pass before a commit.
+
+They build `bin/codeshot-dev`, which keeps its data in `~/.codeshot-dev`, so
+trying it out never touches the history of an installed codeshot.
+`runbook run app/sync` imports the problems of the checkout into it,
+`runbook run app/start` opens its TUI, and `runbook run app/install-completion`
+makes `codeshot-dev <Tab>` complete in bash, apart from `codeshot`'s own
+completion.
+
 ## Adding problems
 
 A problem is a folder in `problems/`, named for its slug:

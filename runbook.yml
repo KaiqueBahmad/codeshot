@@ -1,0 +1,77 @@
+app/start:
+  description: Build into bin/ and open the TUI, on the data in ~/.codeshot-dev
+  dir: .
+  run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot && ./bin/codeshot-dev
+
+app/sync:
+  description: Build into bin/ and import the problems of this checkout into ~/.codeshot-dev
+  dir: .
+  run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot && ./bin/codeshot-dev sync --from .
+
+app/list:
+  description: Build into bin/ and print the problems in ~/.codeshot-dev
+  dir: .
+  run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot && ./bin/codeshot-dev list
+
+app/help:
+  description: Print the usage text of whatever the last build left in bin/
+  dir: bin
+  run: ./codeshot-dev --help
+
+app/install-completion:
+  description: Build into bin/ and install its bash completion for this user, apart from codeshot's own
+  dir: .
+  run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot && mkdir -p ~/.local/share/bash-completion/completions && ./bin/codeshot-dev completion bash | sed -e 's/^_codeshot()/_codeshot_dev()/' -e 's/^complete -F _codeshot codeshot$/complete -F _codeshot_dev codeshot-dev/' > ~/.local/share/bash-completion/completions/codeshot-dev
+
+app/reset:
+  description: Delete ~/.codeshot-dev, the dev build's database and attempts, to start over
+  run: rm -rf ~/.codeshot-dev
+
+go/build:
+  description: Compile the binary into bin/ with -dev suffix, keeping its data in ~/.codeshot-dev
+  dir: .
+  run: go build -ldflags '-X codeshot/internal/home.dirName=.codeshot-dev' -o bin/codeshot-dev ./cmd/codeshot
+
+go/test:
+  description: Run every test, the judge's in docker too
+  dir: .
+  run: go test ./...
+
+go/test-short:
+  description: Run every test but the ones that need docker
+  dir: .
+  run: go test -short ./...
+
+go/vet:
+  description: Report suspicious code
+  dir: .
+  run: go vet ./...
+
+go/check:
+  description: Everything that must pass before a commit, in order
+  dir: .
+  run: |
+    set -e
+    unclean=$(gofmt -l ./cmd ./internal)
+    [ -z "$unclean" ] || { echo "not gofmt clean:"; echo "$unclean"; exit 1; }
+    go vet ./...
+    go test ./...
+
+go/fmt:
+  description: List the files that are not gofmt clean
+  dir: .
+  run: gofmt -l ./cmd ./internal
+
+go/tidy:
+  description: Bring go.mod and go.sum back in line with the imports
+  dir: .
+  run: go mod tidy
+
+problems/outputs:
+  description: Write every test's expected output from its problem's solution.py
+  dir: .
+  run: scripts/outputs.sh
+
+git/log:
+  description: Show the last ten commits, one per line
+  run: git log --pretty=format:'%h %s' -10
