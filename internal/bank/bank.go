@@ -15,7 +15,7 @@ import (
 )
 
 // DefaultURL is the repository sync clones when it is told no other place.
-const DefaultURL = "https://github.com/kaiquebt/codeshot.git"
+const DefaultURL = "https://github.com/kaiquebahmad/codeshot.git"
 
 // Source is somewhere problems come from.
 type Source interface {
