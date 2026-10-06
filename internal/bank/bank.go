@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 
 	"codeshot/internal/problem"
+	"codeshot/internal/store"
 )
 
 // DefaultURL is the repository sync clones when it is told no other place.
@@ -113,4 +114,19 @@ func trimNewline(b []byte) []byte {
 		b = b[:len(b)-1]
 	}
 	return b
+}
+
+// Import fetches the problems of src and stores them, and gives back how many
+// there were.
+func Import(s *store.Store, src Source) (int, error) {
+	all, err := src.Fetch()
+	if err != nil {
+		return 0, err
+	}
+	for _, p := range all {
+		if err := s.SaveProblem(p, src.Name()); err != nil {
+			return 0, err
+		}
+	}
+	return len(all), nil
 }

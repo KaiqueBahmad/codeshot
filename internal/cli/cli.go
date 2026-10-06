@@ -85,12 +85,6 @@ func Main(args []string) int {
 	return c.run(args[1:])
 }
 
-// runTUI opens the TUI. Until it exists, it says so.
-func runTUI(args []string) int {
-	fmt.Println(help)
-	return 0
-}
-
 // report prints err, if there is one, and turns it into an exit status.
 func report(err error) int {
 	if err != nil {

@@ -31,15 +31,10 @@ func syncCmd(args []string) int {
 	}
 	src := bank.From(*from, cache)
 	fmt.Printf("fetching problems from %s\n", src.Name())
-	all, err := src.Fetch()
+	n, err := bank.Import(s, src)
 	if err != nil {
 		return report(err)
 	}
-	for _, p := range all {
-		if err := s.SaveProblem(p, src.Name()); err != nil {
-			return report(err)
-		}
-	}
-	fmt.Printf("%d problems synced\n", len(all))
+	fmt.Printf("%d problems synced\n", n)
 	return 0
 }
