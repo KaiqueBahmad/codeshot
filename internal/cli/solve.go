@@ -120,4 +120,3 @@ func reorder(args []string) []string {
 	}
 	return append(flags, rest...)
 }
-

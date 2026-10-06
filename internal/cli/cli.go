@@ -31,6 +31,8 @@ Commands:
   solve <problem> --lang <language> [--editor <editor>]
                  start a new attempt in a folder of its own, and open it in
                  the editor, or print the folder when none is given
+  test [folder]  run an attempt against the tests in its folder; nothing
+                 is recorded
 
 Options:
   -h, --help     print this help and exit
