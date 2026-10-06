@@ -26,6 +26,8 @@ Commands:
   sync [--from <git url | dir>]
                  import the problems of a bank, by default the codeshot
                  repository
+  list [--tag t] [--difficulty d] [--status s]
+                 print the problems: ✓ solved, ~ tried, · untouched
 
 Options:
   -h, --help     print this help and exit
