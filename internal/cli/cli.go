@@ -40,6 +40,9 @@ Commands:
                  list the submissions, or print one in full with its code
   restore <submission id> [--editor <editor>]
                  start a new attempt from the code of an old submission
+  clean [problem] [--keep-last n] [--force]
+                 delete attempt folders; what was submitted stays in the
+                 history, and folders with work that was not are kept
 
 Options:
   -h, --help     print this help and exit

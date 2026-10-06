@@ -182,3 +182,14 @@ func (s *Store) Submissions(problemID int64) ([]Submission, error) {
 	}
 	return all, rows.Err()
 }
+
+// LatestCode gives back the code of the last submission from an attempt, and
+// whether there was one.
+func (s *Store) LatestCode(attemptID int64) (string, bool, error) {
+	var code string
+	err := s.db.QueryRow(`SELECT code FROM submissions WHERE attempt_id = ? ORDER BY id DESC LIMIT 1`, attemptID).Scan(&code)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", false, nil
+	}
+	return code, err == nil, err
+}
