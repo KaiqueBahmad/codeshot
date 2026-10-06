@@ -33,6 +33,9 @@ Commands:
                  the editor, or print the folder when none is given
   test [folder]  run an attempt against the tests in its folder; nothing
                  is recorded
+  submit [folder]
+                 judge an attempt against every test of its problem, hidden
+                 ones too, and record the submission
 
 Options:
   -h, --help     print this help and exit

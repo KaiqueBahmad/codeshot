@@ -61,14 +61,12 @@ func Reserve(root, slug string) (string, error) {
 // Fill writes an attempt's files into dir: code as the solution, the
 // statement, the spec, the sample tests and the scripts.
 func Fill(dir string, spec Spec, code, statement string, samples []problem.Test) error {
-	raw, err := json.MarshalIndent(spec, "", "  ")
-	if err != nil {
+	if err := WriteSpec(dir, spec); err != nil {
 		return err
 	}
 	files := map[string]string{
 		spec.File:    code,
 		"problem.md": statement,
-		SpecName:     string(raw) + "\n",
 	}
 	for _, t := range samples {
 		files[filepath.Join("tests", t.Name+".in")] = t.Input
@@ -90,6 +88,15 @@ func Fill(dir string, spec Spec, code, statement string, samples []problem.Test)
 		}
 	}
 	return nil
+}
+
+// WriteSpec writes spec into the attempt folder dir.
+func WriteSpec(dir string, spec Spec) error {
+	raw, err := json.MarshalIndent(spec, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filepath.Join(dir, SpecName), append(raw, '\n'), 0o644)
 }
 
 // executable is how the scripts call codeshot: by name when it is on the
