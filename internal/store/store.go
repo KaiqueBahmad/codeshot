@@ -71,6 +71,14 @@ var migrations = []string{
 	);
 	CREATE INDEX attempts_problem ON attempts(problem_id);
 	CREATE INDEX submissions_attempt ON submissions(attempt_id);`,
+
+	`ALTER TABLE problems ADD COLUMN function TEXT NOT NULL DEFAULT '';
+	CREATE TABLE problem_templates (
+		problem_id INTEGER NOT NULL REFERENCES problems(id) ON DELETE CASCADE,
+		file       TEXT NOT NULL,
+		code       TEXT NOT NULL,
+		PRIMARY KEY (problem_id, file)
+	);`,
 }
 
 // Open opens the database at path, creating it and its directory if they are

@@ -41,7 +41,11 @@ func solveCmd(args []string) int {
 	if err != nil {
 		return report(err)
 	}
-	dir, err := workspace.New(s, p, l, l.Template)
+	code, err := workspace.Starter(s, p, l)
+	if err != nil {
+		return report(err)
+	}
+	dir, err := workspace.New(s, p, l, code)
 	if err != nil {
 		return report(err)
 	}

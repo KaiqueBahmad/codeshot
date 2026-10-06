@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"codeshot/internal/stub"
 )
 
 func write(t *testing.T, path, content string) {
@@ -72,5 +74,24 @@ func TestLoadAll_Repository(t *testing.T) {
 	}
 	if len(all) == 0 {
 		t.Fatal("no problems in problems/")
+	}
+}
+
+// Every function a problem in the repository gives must make code in every
+// language.
+func TestLoadAll_RepositoryFunctions(t *testing.T) {
+	all, err := LoadAll("../../problems")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range all {
+		if p.Meta.Function == nil {
+			continue
+		}
+		for _, lang := range []string{"c", "cpp", "java", "python", "go", "rust", "javascript"} {
+			if _, err := stub.Generate(lang, *p.Meta.Function); err != nil {
+				t.Errorf("%s in %s: %v", p.Slug, lang, err)
+			}
+		}
 	}
 }

@@ -6,6 +6,8 @@
 //	  meta.json       title, difficulty, tags, limits, and which tests are samples
 //	  tests/NN.in     what the solution reads
 //	  tests/NN.out    what it must print
+//	  templates/      optional: the code a solution starts from, by file name,
+//	                  for a language the function in meta.json does not suit
 //
 // The samples are copied next to a solution for it to try against; the rest
 // stay hidden, and only a submission runs them.
@@ -19,6 +21,8 @@ import (
 	"slices"
 	"sort"
 	"strings"
+
+	"codeshot/internal/stub"
 )
 
 // The difficulties a problem can have, from easiest.
@@ -39,6 +43,10 @@ type Meta struct {
 	TimeLimitMS int      `json:"time_limit_ms"`
 	MemoryMB    int      `json:"memory_mb"`
 	Samples     []string `json:"samples"`
+	// Function is the function the problem is solved in, from which the
+	// code a solution starts from is written. Without one, a solution
+	// starts from its language's plain template.
+	Function *stub.Function `json:"function,omitempty"`
 }
 
 // Test is one input and the output it must give.
@@ -55,6 +63,9 @@ type Problem struct {
 	Meta      Meta
 	Statement string
 	Tests     []Test
+	// Templates is the code a solution starts from in a language, by the
+	// file name the language uses, overriding what Function would give.
+	Templates map[string]string
 }
 
 // Load reads the problem in dir. Its slug is the directory's name.
@@ -98,6 +109,24 @@ func Load(dir string) (Problem, error) {
 		})
 	}
 
+	templates, err := os.ReadDir(filepath.Join(dir, "templates"))
+	if err != nil && !os.IsNotExist(err) {
+		return p, fmt.Errorf("problem %s: %w", p.Slug, err)
+	}
+	for _, t := range templates {
+		if t.IsDir() {
+			continue
+		}
+		code, err := os.ReadFile(filepath.Join(dir, "templates", t.Name()))
+		if err != nil {
+			return p, fmt.Errorf("problem %s: %w", p.Slug, err)
+		}
+		if p.Templates == nil {
+			p.Templates = map[string]string{}
+		}
+		p.Templates[t.Name()] = string(code)
+	}
+
 	return p, p.check()
 }
 
@@ -133,6 +162,11 @@ func (p Problem) check() error {
 		return fmt.Errorf("problem %s: meta.json needs a time_limit_ms and a memory_mb", p.Slug)
 	case len(p.Tests) == 0:
 		return fmt.Errorf("problem %s: has no tests", p.Slug)
+	}
+	if m.Function != nil {
+		if err := m.Function.Check(); err != nil {
+			return fmt.Errorf("problem %s: function: %w", p.Slug, err)
+		}
 	}
 	for _, s := range m.Samples {
 		if !slices.ContainsFunc(p.Tests, func(t Test) bool { return t.Name == s }) {

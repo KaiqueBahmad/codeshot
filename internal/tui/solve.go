@@ -25,8 +25,12 @@ func pickLanguage(a *app, p store.ProblemInfo) tea.Cmd {
 	}
 	picker, cmd := newPicker("which language do you want to use?", p.Title, names, func(a *app, i int) tea.Cmd {
 		l := lang.All[i]
-		dir, err := workspace.New(a.store, p, l, l.Template)
 		a.pop()
+		code, err := workspace.Starter(a.store, p, l)
+		if err != nil {
+			return notice(err.Error())
+		}
+		dir, err := workspace.New(a.store, p, l, code)
 		if err != nil {
 			return notice(err.Error())
 		}

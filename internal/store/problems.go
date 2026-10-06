@@ -2,12 +2,14 @@ package store
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
 
 	"codeshot/internal/problem"
+	"codeshot/internal/stub"
 )
 
 // The status of a problem, as far as its history goes.
@@ -29,6 +31,8 @@ type ProblemInfo struct {
 	TimeLimitMS int
 	MemoryMB    int
 	Status      string
+	// Function is the function the problem is solved in, or nil.
+	Function *stub.Function
 }
 
 // ErrNotFound is what a lookup gives back when there is nothing by that name.
@@ -43,17 +47,26 @@ func (s *Store) SaveProblem(p problem.Problem, source string) error {
 	}
 	defer tx.Rollback()
 
+	function := ""
+	if p.Meta.Function != nil {
+		raw, err := json.Marshal(p.Meta.Function)
+		if err != nil {
+			return err
+		}
+		function = string(raw)
+	}
 	var id int64
 	err = tx.QueryRow(`
-		INSERT INTO problems (slug, source, title, difficulty, statement, time_limit_ms, memory_mb, imported_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		INSERT INTO problems (slug, source, title, difficulty, statement, time_limit_ms, memory_mb, imported_at, function)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 		ON CONFLICT (slug) DO UPDATE SET
 			source = excluded.source, title = excluded.title, difficulty = excluded.difficulty,
 			statement = excluded.statement, time_limit_ms = excluded.time_limit_ms,
-			memory_mb = excluded.memory_mb, imported_at = excluded.imported_at
+			memory_mb = excluded.memory_mb, imported_at = excluded.imported_at,
+			function = excluded.function
 		RETURNING id`,
 		p.Slug, source, p.Meta.Title, p.Meta.Difficulty, p.Statement,
-		p.Meta.TimeLimitMS, p.Meta.MemoryMB, time.Now().UnixMilli(),
+		p.Meta.TimeLimitMS, p.Meta.MemoryMB, time.Now().UnixMilli(), function,
 	).Scan(&id)
 	if err != nil {
 		return fmt.Errorf("saving problem %s: %w", p.Slug, err)
@@ -76,13 +89,32 @@ func (s *Store) SaveProblem(p problem.Problem, source string) error {
 			return err
 		}
 	}
+	if _, err := tx.Exec(`DELETE FROM problem_templates WHERE problem_id = ?`, id); err != nil {
+		return err
+	}
+	for file, code := range p.Templates {
+		if _, err := tx.Exec(`INSERT INTO problem_templates (problem_id, file, code) VALUES (?, ?, ?)`, id, file, code); err != nil {
+			return err
+		}
+	}
 	return tx.Commit()
+}
+
+// Template gives back the code a problem has a solution in file start from,
+// and whether it has any.
+func (s *Store) Template(problemID int64, file string) (string, bool, error) {
+	var code string
+	err := s.db.QueryRow(`SELECT code FROM problem_templates WHERE problem_id = ? AND file = ?`, problemID, file).Scan(&code)
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", false, nil
+	}
+	return code, err == nil, err
 }
 
 // problemColumns is what scanProblem reads, in its order. The status comes
 // from the attempts and submissions at the problem.
 const problemColumns = `
-	p.id, p.slug, p.source, p.title, p.difficulty, p.statement, p.time_limit_ms, p.memory_mb,
+	p.id, p.slug, p.source, p.title, p.difficulty, p.statement, p.time_limit_ms, p.memory_mb, p.function,
 	COALESCE((SELECT group_concat(tag, ',') FROM (SELECT tag FROM problem_tags WHERE problem_id = p.id ORDER BY tag)), ''),
 	CASE
 		WHEN EXISTS (SELECT 1 FROM submissions s JOIN attempts a ON a.id = s.attempt_id
@@ -93,13 +125,22 @@ const problemColumns = `
 
 func scanProblem(row interface{ Scan(...any) error }) (ProblemInfo, error) {
 	var p ProblemInfo
-	var tags string
+	var tags, function string
 	err := row.Scan(&p.ID, &p.Slug, &p.Source, &p.Title, &p.Difficulty, &p.Statement,
-		&p.TimeLimitMS, &p.MemoryMB, &tags, &p.Status)
+		&p.TimeLimitMS, &p.MemoryMB, &function, &tags, &p.Status)
+	if err != nil {
+		return p, err
+	}
 	if tags != "" {
 		p.Tags = strings.Split(tags, ",")
 	}
-	return p, err
+	if function != "" {
+		p.Function = new(stub.Function)
+		if err := json.Unmarshal([]byte(function), p.Function); err != nil {
+			return p, fmt.Errorf("problem %s: function: %w", p.Slug, err)
+		}
+	}
+	return p, nil
 }
 
 // Problems lists every problem, easiest first and then by title.
