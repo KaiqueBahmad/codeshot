@@ -120,6 +120,7 @@ problems/two-sum/
 ├── problem.md     the statement, in markdown
 ├── meta.json      title, difficulty, tags, limits, samples
 ├── solution.py    a reference solution
+├── templates/     optional: code to start from, by file name, such as main.c
 └── tests/
     ├── 01.in
     └── 01.out
@@ -132,13 +133,46 @@ problems/two-sum/
   "tags": ["arrays", "hash-table"],
   "time_limit_ms": 1000,
   "memory_mb": 256,
-  "samples": ["01", "02"]
+  "samples": ["01", "02"],
+  "function": {
+    "name": "two_sum",
+    "input": ["n: int", "target: int", "nums: int[n]"],
+    "params": ["nums", "target"],
+    "returns": "int[]"
+  }
 }
 ```
 
 The difficulty is `easy`, `medium` or `hard`. The tests named in `samples` are
-copied into every attempt's folder; the rest stay hidden. Solutions read the
-input from stdin and print the answer to stdout.
+copied into every attempt's folder; the rest stay hidden. Solutions are judged
+on what they print to stdout for what they read from stdin.
+
+`function` is what a solution starts from, as on LeetCode: a function to fill
+in, and under it a main that reads the input, calls the function and prints
+what it returns, written out for every language. `input` is what stdin holds,
+in order, `params` is what the function is given out of it, and `returns` is
+what it gives back:
+
+| type | is |
+|---|---|
+| `int`, `long` | a number, 32 or 64 bits wide |
+| `word` | a run of characters without spaces |
+| `line` | a whole line, spaces and all |
+| `int[n]`, `long[n]`, `word[n]` | `n` of them, `n` being a number read before |
+| `int[n][k]`, `long[n][k]` | `n` rows of `k` numbers |
+
+A function returns an `int`, `long`, `bool` or `string`, a list of `int`,
+`long` or `string` written as `int[]`, or rows of `k` numbers written as
+`int[][k]`. A list is printed on one line, space apart, or one to a line with
+`"output": "lines"`. Rows are printed one to a line, and with
+`"output": "count"` behind a line saying how many there are. The function is
+named in snake_case, and each language writes it its own way: `two_sum` in C,
+Python and Rust, and `twoSum` in C++, Java, Go and JavaScript.
+
+When a language needs something the function cannot say, put the code it
+should start from in `templates/`, named as the language names its file, such
+as `main.c` or `Main.java`. A problem without a function starts from a plain
+program that reads stdin.
 
 Write the inputs, then let the reference solution write the outputs:
 
