@@ -5,6 +5,9 @@ package cli
 import (
 	"fmt"
 	"os"
+
+	"codeshot/internal/home"
+	"codeshot/internal/store"
 )
 
 const usage = "usage: codeshot [command] [arguments]"
@@ -20,6 +23,9 @@ With no command it opens the TUI to browse problems and solve one.
 
 Commands:
   tui            open the TUI (the same as no command at all)
+  sync [--from <git url | dir>]
+                 import the problems of a bank, by default the codeshot
+                 repository
 
 Options:
   -h, --help     print this help and exit
@@ -75,4 +81,13 @@ func report(err error) int {
 		return 1
 	}
 	return 0
+}
+
+// openStore opens the database in codeshot's directory.
+func openStore() (*store.Store, error) {
+	path, err := home.Path("codeshot.db")
+	if err != nil {
+		return nil, err
+	}
+	return store.Open(path)
 }
