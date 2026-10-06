@@ -28,6 +28,9 @@ Commands:
                  repository
   list [--tag t] [--difficulty d] [--status s]
                  print the problems: ✓ solved, ~ tried, · untouched
+  solve <problem> --lang <language> [--editor <editor>]
+                 start a new attempt in a folder of its own, and open it in
+                 the editor, or print the folder when none is given
 
 Options:
   -h, --help     print this help and exit
