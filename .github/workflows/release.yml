@@ -1,0 +1,129 @@
+name: release
+
+# A release is a tag: pushing vX.Y.Z checks the commit, builds Codeshot from it, and publishes a GitHub release with
+# the binaries and what CHANGELOG.md says about the version.
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  check:
+    uses: ./.github/workflows/check.yml
+
+  build:
+    needs: check
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            channel: tar
+            bin: codeshot
+          - os: ubuntu-22.04
+            channel: deb
+            bin: codeshot
+    runs-on: ${{ matrix.os }}
+    env:
+      CGO_ENABLED: 0
+    defaults:
+      run:
+        shell: bash
+    steps:
+      # Keep the tagged checkout and its history available to the build.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go build -trimpath -ldflags='-s -w -X codeshot/internal/cli.version=${{ github.ref_name }}' -o "dist/${{ matrix.bin }}" ./cmd/codeshot
+      # Refuse to publish a binary with a different version from its tag.
+      - name: Check the version
+        run: |
+          got=$("dist/${{ matrix.bin }}" --version)
+          want="codeshot $GITHUB_REF_NAME"
+          if [ "$got" != "$want" ]; then
+            echo "the binary says '$got', want '$want'"
+            exit 1
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: codeshot-${{ matrix.channel }}
+          path: dist/${{ matrix.bin }}
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      # The notes are the section of CHANGELOG.md for this version, which has to
+      # be there and dated: a release still marked Work In Progress was tagged
+      # too early.
+      - name: Take the notes from the changelog
+        run: |
+          version=${GITHUB_REF_NAME#v}
+          header=$(grep -m1 -F "## [$version]" CHANGELOG.md || true)
+          if [ -z "$header" ]; then
+            echo "CHANGELOG.md has no section for $version"
+            exit 1
+          fi
+          if echo "$header" | grep -qi 'work in progress'; then
+            echo "CHANGELOG.md still has $version as Work In Progress: $header"
+            exit 1
+          fi
+          awk -v h="$header" '$0 == h { on = 1; next } on && /^## / { exit } on' CHANGELOG.md > notes.md
+          cat notes.md
+
+      - name: Package
+        run: |
+          mkdir dist
+          # Artifacts lose the file mode on the way, so the binary is made
+          # executable again before it is packed.
+          chmod +x artifacts/codeshot-tar/codeshot artifacts/codeshot-deb/codeshot
+          name=codeshot_${GITHUB_REF_NAME}
+          tar -czf "dist/${name}_linux_amd64.tar.gz" -C artifacts/codeshot-tar codeshot
+
+          # The .deb: the binary, and the bash and fish completion where those
+          # shells look for them.
+          version=${GITHUB_REF_NAME#v}
+          root=deb/debian/codeshot
+          install -Dm755 artifacts/codeshot-deb/codeshot "$root/usr/bin/codeshot"
+          install -d -m755 "$root/usr/share/bash-completion/completions" "$root/usr/share/fish/vendor_completions.d"
+          "$root/usr/bin/codeshot" completion bash > "$root/usr/share/bash-completion/completions/codeshot"
+          "$root/usr/bin/codeshot" completion fish > "$root/usr/share/fish/vendor_completions.d/codeshot.fish"
+          chmod 644 "$root/usr/share/bash-completion/completions/codeshot" "$root/usr/share/fish/vendor_completions.d/codeshot.fish"
+          install -d -m755 "$root/DEBIAN"
+          cat > "$root/DEBIAN/control" <<CONTROL
+          Package: codeshot
+          Version: $version
+          Architecture: amd64
+          Maintainer: Kaique Bahmad <kaiquebahmadt@gmail.com>
+          Depends: git
+          Recommends: docker.io
+          Section: devel
+          Priority: optional
+          Homepage: https://github.com/kaiquebahmad/codeshot
+          Description: Practice programming problems in the terminal
+           Browse problems, solve them in your editor and submit them to a local
+           Docker judge. Problems, attempts and submissions stay on your machine.
+          CONTROL
+          dpkg-deb --build --root-owner-group "$root" "dist/codeshot_${version}_amd64.deb"
+
+          (cd dist && sha256sum * > checksums.txt)
+          ls -l dist
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "$GITHUB_REF_NAME" \
+            --notes-file notes.md \
+            --verify-tag

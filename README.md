@@ -7,7 +7,24 @@ limits. There is no account to log in to: everything lives in `~/.codeshot`.
 
 ## Installing
 
-You need Go to build it, and docker and git to use it.
+Download the Linux amd64 `.deb` or `.tar.gz` from
+[Releases](https://github.com/kaiquebahmad/codeshot/releases).
+You need docker and git to use codeshot.
+
+Install the Debian package with `sudo apt install ./codeshot_0.1.0_amd64.deb`
+(replace the version with the one downloaded). It includes bash and fish
+completion. For the archive, extract it and install the executable:
+
+```bash
+tar -xzf codeshot_v0.1.0_linux_amd64.tar.gz
+mkdir -p ~/.local/bin
+install -m755 codeshot ~/.local/bin/codeshot
+```
+
+The release's `checksums.txt` lets you verify the downloads with
+`sha256sum --ignore-missing -c checksums.txt`.
+
+To build from source, you need Go as specified in `go.mod`:
 
 ```bash
 go build -o ~/.local/bin/codeshot ./cmd/codeshot
@@ -110,6 +127,8 @@ completion. `runbook run app/link` links `bin/codeshot-dev` into `~/.local/bin`,
 so every later build runs as `codeshot-dev` from anywhere, and
 `runbook run app/unlink` takes the link away. `runbook run app/dev-install`
 does the build, the completion and the link at once.
+
+See [RELEASING.md](RELEASING.md) for the tag and changelog release process.
 
 ## Adding problems
 
