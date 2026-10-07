@@ -11,6 +11,12 @@ Download the Linux amd64 `.deb` or `.tar.gz` from
 [Releases](https://github.com/kaiquebahmad/codeshot/releases).
 You need docker and git to use codeshot.
 
+To install the latest Debian package in one line (requires curl and wget):
+
+```bash
+wget -qO /tmp/codeshot.deb "$(curl -fsSL https://api.github.com/repos/KaiqueBahmad/codeshot/releases/latest | grep -o 'https://[^"]*_amd64\.deb')" && sudo apt install -y /tmp/codeshot.deb
+```
+
 Install the Debian package with `sudo apt install ./codeshot_0.1.0_amd64.deb`
 (replace the version with the one downloaded). It includes bash and fish
 completion. For the archive, extract it and install the executable:
