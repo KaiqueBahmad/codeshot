@@ -35,6 +35,12 @@ codeshot sync
 the problems in its `problems/` folder. To work from a checkout instead, run
 `codeshot sync --from .`.
 
+`codeshot update` updates a `.deb` installation to the latest GitHub release.
+It verifies the package against `checksums.txt`, then runs `sudo apt install`;
+sudo and apt use the current terminal for their prompts. Archive and source
+builds print where to obtain a new version and exit with status 1.
+`codeshot --version` includes the release channel, such as `(deb)` or `(tar)`.
+
 ## Using it
 
 ```bash
@@ -83,6 +89,7 @@ Everything the TUI does can also be done from the command line:
 | `codeshot submit [folder]` | judge an attempt against every test, and record it |
 | `codeshot history [problem \| submission id]` | list submissions, or print one in full |
 | `codeshot restore <submission id>` | start a new attempt from an old submission's code |
+| `codeshot update` | update the installed Debian package |
 | `codeshot clean [problem] [--keep-last n] [--force]` | delete attempt folders |
 
 The languages are C, C++, Java, Python, Go, Rust and JavaScript.

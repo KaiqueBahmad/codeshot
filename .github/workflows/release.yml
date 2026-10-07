@@ -36,12 +36,12 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - run: go build -trimpath -ldflags='-s -w -X codeshot/internal/cli.version=${{ github.ref_name }}' -o "dist/${{ matrix.bin }}" ./cmd/codeshot
+      - run: go build -trimpath -ldflags='-s -w -X codeshot/internal/cli.version=${{ github.ref_name }} -X codeshot/internal/cli.channel=${{ matrix.channel }}' -o "dist/${{ matrix.bin }}" ./cmd/codeshot
       # Refuse to publish a binary with a different version from its tag.
       - name: Check the version
         run: |
           got=$("dist/${{ matrix.bin }}" --version)
-          want="codeshot $GITHUB_REF_NAME"
+          want="codeshot $GITHUB_REF_NAME (${{ matrix.channel }})"
           if [ "$got" != "$want" ]; then
             echo "the binary says '$got', want '$want'"
             exit 1

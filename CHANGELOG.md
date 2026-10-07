@@ -3,6 +3,13 @@
 All notable changes to this project are documented here.
 Versions follow Semantic Versioning.
 
+## [0.2.0] - Work In Progress
+
+### Added
+- `codeshot update` for Debian installations, with SHA-256 verification;
+  archive and source builds point to installation instructions.
+- Release channel in `codeshot --version`.
+
 ## [0.1.0] - 2026-10-07
 
 ### Added

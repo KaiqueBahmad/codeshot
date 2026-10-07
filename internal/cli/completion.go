@@ -40,6 +40,7 @@ var summaries = [][2]string{
 	{"history", "list the submissions, or print one in full"},
 	{"restore", "start a new attempt from an old submission"},
 	{"clean", "delete attempt folders"},
+	{"update", "install the latest release of codeshot"},
 	{"completion", "print a completion script for bash, zsh or fish"},
 }
 

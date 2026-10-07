@@ -2,7 +2,9 @@
 
 Codeshot uses semantic version tags: `vX.Y.Z`. The tag is the source of truth;
 the release workflow stamps it into the binary, and `codeshot --version`
-prints it. Source builds use Go's build information instead.
+prints it with the package channel (`deb` or `tar`). The workflow stamps
+`internal/cli.channel` into each binary so `codeshot update` can select the
+Debian installation flow. Source builds use Go's build information instead.
 
 ## Cutting a release
 

@@ -36,6 +36,7 @@ func TestBashCompletion(t *testing.T) {
 		want  string
 	}{
 		{[]string{"su"}, "submit"},
+		{[]string{"up"}, "update"},
 		{[]string{"solve", "two-sum", "--lang", "py"}, "python"},
 		{[]string{"solve", "--editor", "nv"}, "nvim"},
 		{[]string{"list", "--difficulty", "h"}, "hard"},

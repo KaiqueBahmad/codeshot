@@ -1,11 +1,15 @@
 package cli
 
-import "runtime/debug"
+import (
+	"fmt"
+	"runtime/debug"
+)
 
 // version is the semantic version of this build. Left empty, it is read from
 // what go build stamped into the binary: the git tag of the commit it was built
-// from, or a pseudo-version behind the last tag. A release can set it outright
-// with -ldflags "-X codeshot/internal/cli.version=v1.2.0".
+// from, such as v1.2.0, or a pseudo-version behind the last tag when the commit
+// has none of its own. A release can set it outright with
+// -ldflags "-X codeshot/internal/cli.version=v1.2.0".
 var version string
 
 // currentVersion is the version --version prints.
@@ -17,4 +21,26 @@ func currentVersion() string {
 		return info.Main.Version
 	}
 	return "(devel)"
+}
+
+// channel is how this build reaches whoever runs it, set by the release that
+// packs it with -ldflags "-X codeshot/internal/cli.channel=deb": "deb" for the
+// .deb, "tar" for the .tar.gz and "zip" for the Windows .zip. Left empty, it
+// is a build from source. It is what decides how update brings it up to date.
+var channel string
+
+// The channels a release sets.
+const (
+	channelDeb = "deb"
+	channelTar = "tar"
+	channelZip = "zip"
+)
+
+// versionLine is what --version prints: the version, and the channel when a
+// release set one.
+func versionLine() string {
+	if channel == "" {
+		return "codeshot " + currentVersion()
+	}
+	return fmt.Sprintf("codeshot %s (%s)", currentVersion(), channel)
 }

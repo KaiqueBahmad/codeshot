@@ -43,6 +43,8 @@ Commands:
   clean [problem] [--keep-last n] [--force]
                  delete attempt folders; what was submitted stays in the
                  history, and folders with work that was not are kept
+  update         install the latest release for the .deb; otherwise say where
+                 to get it
   completion bash|zsh|fish
                  print a completion script for the shell
 
@@ -74,7 +76,7 @@ func Main(args []string) int {
 		fmt.Println(help)
 		return 0
 	case "-v", "--version":
-		fmt.Println("codeshot", currentVersion())
+		fmt.Println(versionLine())
 		return 0
 	case "tui":
 		return runTUI(args[1:])
