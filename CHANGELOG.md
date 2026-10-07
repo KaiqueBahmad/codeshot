@@ -10,6 +10,9 @@ Versions follow Semantic Versioning.
   archive and source builds point to installation instructions.
 - Release channel in `codeshot --version`.
 
+### Changed
+- Copy the attempt folder path from the editor picker and keep the TUI open.
+
 ## [0.1.0] - 2026-10-07
 
 ### Added

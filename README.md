@@ -59,8 +59,12 @@ $ lets go
 > Open with NeoVim
   Open with Vim
   Open with VS Code
-  Just tell me the folder
+  Copy folder path
 ```
+
+“Copy folder path” copies the attempt path to the clipboard through the terminal
+(requires OSC52 support). Every selection returns to the TUI; terminal editors
+use the terminal until they close, then the TUI resumes.
 
 The folder has everything the attempt needs:
 

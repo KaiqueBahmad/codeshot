@@ -26,18 +26,14 @@ type app struct {
 	width, height int
 	dark          bool
 	stack         []screen
-	// folder is printed once the TUI has closed, for someone who asked to
-	// be told where an attempt is rather than have it opened.
-	folder string
 }
 
-// Run opens the TUI on s, and gives back a folder to print once it has
-// closed, if one was asked for.
-func Run(s *store.Store) (string, error) {
+// Run opens the TUI on s.
+func Run(s *store.Store) error {
 	a := &app{store: s, dark: lipgloss.HasDarkBackground(os.Stdin, os.Stdout)}
 	a.push(newBrowse(a))
 	_, err := tea.NewProgram(root{a}).Run()
-	return a.folder, err
+	return err
 }
 
 func (a *app) push(s screen) { a.stack = append(a.stack, s) }

@@ -70,8 +70,8 @@ func reopenAttempt(a *app, at store.Attempt) tea.Cmd {
 	return pickEditor(a, at.Dir, l.File)
 }
 
-// folderOption is the answer for someone who will open the folder themselves.
-const folderOption = "Just tell me the folder"
+// folderOption copies the path for someone who will open the folder themselves.
+const folderOption = "Copy folder path"
 
 // pickEditor asks which editor to open file in dir with, and opens it.
 func pickEditor(a *app, dir, file string) tea.Cmd {
@@ -82,12 +82,11 @@ func pickEditor(a *app, dir, file string) tea.Cmd {
 	}
 	names = append(names, folderOption)
 	picker, cmd := newPicker("lets go", dir, names, func(a *app, i int) tea.Cmd {
+		back := a.pop()
 		if i == len(editors) {
-			a.folder = dir
-			return tea.Quit
+			return tea.Batch(back, tea.SetClipboard(dir), notice("copied folder path · "+shortPath(dir)))
 		}
 		e := editors[i]
-		back := a.pop()
 		run := e.Command(dir, file)
 		hint := fmt.Sprintf("in %s: ./run.sh tries the samples, ./submit.sh submits", shortPath(dir))
 		if !e.Terminal {
